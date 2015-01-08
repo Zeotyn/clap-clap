@@ -1,6 +1,5 @@
 #include "widget.h"
 #include "ui_widget.h"
-#include "foobar.h"
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -13,7 +12,3 @@ Widget::~Widget()
 {
     delete ui;
 }
-
-foobar *blubb = new foobar();
-blubb->getTest();
-
