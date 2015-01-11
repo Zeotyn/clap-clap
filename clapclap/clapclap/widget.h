@@ -23,6 +23,8 @@ private slots:
 
     void on_stopButton_clicked();
 
+    void notified();
+
 private:
     Ui::Widget *ui;
     QMediaPlayer *player = new QMediaPlayer;
