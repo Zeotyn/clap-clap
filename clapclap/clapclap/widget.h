@@ -17,6 +17,7 @@ public:
     ~Widget();
     void startGame();
     void stopGame();
+    QIODevice *test;
 
 private slots:
     void on_startButton_clicked();

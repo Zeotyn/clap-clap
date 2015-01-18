@@ -7,6 +7,8 @@
 #include <QAudioDeviceInfo>
 #include <QAudioFormat>
 #include <QDebug>
+#include <QByteArray>
+
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -25,10 +27,17 @@ Widget::Widget(QWidget *parent) :
     audioFormat.setByteOrder(QAudioFormat::LittleEndian);
     audioFormat.setCodec("audio/pcm");
 
+
+
     QAudioDeviceInfo info = QAudioDeviceInfo::defaultInputDevice();
     QAudioInput *audioInput = new QAudioInput(info, audioFormat, this);
     connect(audioInput, SIGNAL(notify()), SLOT(notified()));
-    audioInput->start();
+
+//    audioInput->start();
+
+    test = audioInput->start();
+
+
 }
 
 Widget::~Widget()
@@ -38,6 +47,7 @@ Widget::~Widget()
 
 void Widget::notified()
 {
+    QByteArray foo = test->readAll();
     qWarning() << "notified() called";
 }
 
