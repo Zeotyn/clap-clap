@@ -32,9 +32,6 @@ Widget::Widget(QWidget *parent) :
     QAudioDeviceInfo info = QAudioDeviceInfo::defaultInputDevice();
     QAudioInput *audioInput = new QAudioInput(info, audioFormat, this);
     connect(audioInput, SIGNAL(notify()), SLOT(notified()));
-
-//    audioInput->start();
-
     test = audioInput->start();
 
 
@@ -47,8 +44,12 @@ Widget::~Widget()
 
 void Widget::notified()
 {
-    QByteArray foo = test->readAll();
+    qWarning() << "______________________________";
     qWarning() << "notified() called";
+    qWarning() << "is open: " << test->isOpen();
+    qWarning() << "is readable: " << test->isReadable();
+    qWarning() << "Bytes to write: " << test->bytesToWrite();
+    qWarning() << "Bytes to available (to read): " << test->bytesAvailable();
 }
 
 void Widget::on_startButton_clicked()
