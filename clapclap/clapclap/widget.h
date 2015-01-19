@@ -4,6 +4,12 @@
 #include <QWidget>
 #include <QMediaPlayer>
 
+#include <QAudioDeviceInfo>
+#include <QAudioFormat>
+#include <QAudioInput>
+#include <QIODevice>
+#include <QByteArray>
+
 namespace Ui {
 class Widget;
 }
@@ -17,18 +23,27 @@ public:
     ~Widget();
     void startGame();
     void stopGame();
-    QIODevice *test;
 
 private slots:
     void on_startButton_clicked();
 
     void on_stopButton_clicked();
 
-    void notified();
+    void readMore();
+
 
 private:
     Ui::Widget *ui;
     QMediaPlayer *player = new QMediaPlayer;
+
+    QAudioDeviceInfo m_inputdevice;
+    QAudioFormat m_format;
+    QAudioInput *m_audioinput;
+    QIODevice *m_input;
+    QByteArray m_buffer;
+
+    void initAudio();
+    void createAudio();
 };
 
 #endif // WIDGET_H
