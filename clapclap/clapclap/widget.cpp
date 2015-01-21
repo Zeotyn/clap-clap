@@ -104,10 +104,8 @@ void Widget::readMore()
                 ptr += channelBytes;
             }
         }
-        qWarning() << maxValue;
         maxValue = qMin(maxValue, quint32(127));
-        qreal level = qreal(maxValue) / 127;
-        qWarning() << level;
+        qreal level = qreal(maxValue) / 127;        
 
         if(level > 0.7) {
             m_isClapped = true;
@@ -116,6 +114,8 @@ void Widget::readMore()
             m_isClapped = false;
         }
 
+        qWarning() << "Pegel: " << level;
+        qWarning() << "Es wurde geklatscht: " << m_isClapped;
     }
 }
 
