@@ -41,6 +41,7 @@ private:
     QAudioInput *m_audioinput;
     QIODevice *m_input;
     QByteArray m_buffer;
+    bool m_isClapped;
 
     void initAudio();
     void createAudio();

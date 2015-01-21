@@ -11,8 +11,8 @@ Widget::Widget(QWidget *parent) :
     m_inputdevice(QAudioDeviceInfo::defaultInputDevice()),
     m_audioinput(0),
     m_input(0),
-    m_buffer(BufferSize,0)
-
+    m_buffer(BufferSize,0),
+    m_isClapped(false)
 {
     ui->setupUi(this);
     ui->backgroundFrame->setStyleSheet("background-color: black;");
@@ -108,6 +108,13 @@ void Widget::readMore()
         maxValue = qMin(maxValue, quint32(127));
         qreal level = qreal(maxValue) / 127;
         qWarning() << level;
+
+        if(level > 0.7) {
+            m_isClapped = true;
+        }
+        else {
+            m_isClapped = false;
+        }
 
     }
 }
