@@ -187,8 +187,8 @@ void Widget::readMore()
                 ptr += channelBytes;
             }
         }
-        maxValue = qMin(maxValue, quint32(127));
-        qreal level = qreal(maxValue) / 127;        
+        maxValue = qMin(maxValue, m_maxAmplitude);
+        qreal level = qreal(maxValue) / m_maxAmplitude;
 
         if(level > 0.7) {
             m_isClapped = true;
