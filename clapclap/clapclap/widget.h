@@ -55,6 +55,9 @@ private:
     int m_score;
     QTimer * m_clapTimer;
 
+    // Required input-level for slapping.
+    qreal m_levelRequired;
+
     // Audio setup.
     void initAudio();
     void createAudio();
