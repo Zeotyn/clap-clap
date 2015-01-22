@@ -216,9 +216,9 @@ void Widget::on_startButton_clicked()
         player->play();
 
         ui->gameFrame->setStyleSheet("background-color: red;");
-        clapTimer->start(1000);
+        clapTimer->start(566);
         connect(clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
-ui->gameFrame->setStyleSheet("background-color: red;");
+        //ui->gameFrame->setStyleSheet("background-color: red;");
     // Start microphone listening.
     m_input = m_audioinput->start();
 
@@ -236,7 +236,7 @@ void Widget::on_stopButton_clicked()
 
 void Widget::delayChange() {
     ui->gameFrame->setStyleSheet("background-color: red;");
-    clapTimer->start(1000);
+    clapTimer->start(566);
 }
 
 void Widget::isClapped(){
@@ -246,5 +246,5 @@ void Widget::isClapped(){
            QString scoreString = QString::number(score);
            ui->scoreLabel->setText(scoreString);
     }
-    QTimer::singleShot(25, this, SLOT(delayChange()));
+    QTimer::singleShot(250, this, SLOT(delayChange()));
 }
