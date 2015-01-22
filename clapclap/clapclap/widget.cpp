@@ -16,6 +16,7 @@ Widget::Widget(QWidget *parent) :
     m_input(0),
     m_buffer(BufferSize,0),
     score(0),
+    countdown(4),
 
     m_isClapped(false)
 {
@@ -211,14 +212,10 @@ void Widget::readMore()
 
 void Widget::on_startButton_clicked()
 {
-        //player->setMedia(QUrl::fromLocalFile("../clapclap/music.mp3"));
-        player->setVolume(50);
-        player->play();
 
-        ui->gameFrame->setStyleSheet("background-color: red;");
-        clapTimer->start(566);
-        connect(clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
-        //ui->gameFrame->setStyleSheet("background-color: red;");
+        countdownTimer->start(1000);
+        connect(countdownTimer, SIGNAL(timeout()), this, SLOT(subCountdown()));
+
     // Start microphone listening.
     m_input = m_audioinput->start();
 
@@ -234,7 +231,7 @@ void Widget::on_stopButton_clicked()
     m_audioinput->stop();
 }
 
-void Widget::delayChange() {
+void Widget::setDelay() {
     ui->gameFrame->setStyleSheet("background-color: red;");
     clapTimer->start(566);
 }
@@ -246,5 +243,26 @@ void Widget::isClapped(){
            QString scoreString = QString::number(score);
            ui->scoreLabel->setText(scoreString);
     }
-    QTimer::singleShot(250, this, SLOT(delayChange()));
+    QTimer::singleShot(250, this, SLOT(setDelay()));
+}
+
+void Widget::subCountdown() {
+    QString countdownString = QString::number(countdown);
+    ui->countdownLabel->setText(countdownString);
+    if(countdown == 0) {
+        countdownTimer->stop();
+        startGame();
+        ui->countdownLabel->setText(" ");
+    } else {
+        countdown--;
+    }
+}
+
+void Widget::startGame() {
+    player->setMedia(QUrl::fromLocalFile("../clapclap/music.mp3"));
+    player->setVolume(50);
+    player->play();
+
+    clapTimer->start(566);
+    connect(clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
 }

@@ -25,7 +25,6 @@ public:
     explicit Widget(QWidget *parent = 0);
     ~Widget();    
     void startGame();
-    void stopGame();
 
 
 private slots:
@@ -33,7 +32,8 @@ private slots:
 
     void on_stopButton_clicked();
     void isClapped();
-    void delayChange();
+    void setDelay();
+    void subCountdown();
     void readMore();
 
 private:
@@ -46,8 +46,11 @@ private:
     QIODevice *m_input;
     QByteArray m_buffer;
     bool m_isClapped;
+
     int score;
+    int countdown;
     QTimer * clapTimer = new QTimer(this);
+    QTimer * countdownTimer = new QTimer(this);
 
     void initAudio();
     void createAudio();
