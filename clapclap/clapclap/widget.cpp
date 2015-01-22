@@ -268,8 +268,7 @@ void Widget::subCountdown() {
 
 void Widget::startGame() {
 
-    m_player->setMedia(QUrl::fromLocalFile("../clapclap/music.mp3"));
-//    m_player->setMedia(QUrl::fromLocalFile("/Users/fhofmann/WORK/AVPRG/projekt/avprg/clapclap/clapclap/music.mp3"));
+    m_player->setMedia(QUrl("qrc:/mp3Files/music.mp3"));
     m_player->setVolume(50);
     m_player->play();
 

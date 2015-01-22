@@ -11,6 +11,7 @@
 #include <QByteArray>
 #include <QTimer>
 #include <QtDebug>
+#include <QFile>
 
 
 namespace Ui {
