@@ -207,36 +207,18 @@ void Widget::readAudio()
 
 void Widget::on_startButton_clicked()
 {
-
-
     m_countdownTimer->start(1000);
     connect(m_countdownTimer, SIGNAL(timeout()), this, SLOT(subCountdown()));
-
-    // Start microphone listening.
-    m_input = m_audioinput->start();
-
-    // Connect readyRead signal to readMre slot.
-    connect(m_input, SIGNAL(readyRead()), SLOT(readAudio()));
 }
 
 void Widget::on_stopButton_clicked()
 {
+    stopGame();
     //    m_player->stop();
     ui->gameFrame->setStyleSheet("background-color: grey;");
     ui->countdownLabel->setText("5");
 
-    m_countdown = 4;
-    m_player->stop();
-    m_clapTimer->stop();
-    m_countdownTimer->stop();
 
-    // Stop audioinput.
-    m_audioinput->stop();
-
-    // Disconnect all signals.
-    disconnect(m_clapTimer, 0, 0, 0);
-    disconnect(m_countdownTimer, 0, 0, 0);
-    disconnect(m_input, 0, 0, 0);
 }
 
 void Widget::setDelay() {
@@ -266,12 +248,33 @@ void Widget::subCountdown() {
     }
 }
 
-void Widget::startGame() {
-
+void Widget::startGame()
+{
     m_player->setMedia(QUrl("qrc:/mp3Files/music.mp3"));
     m_player->setVolume(50);
     m_player->play();
 
     m_clapTimer->start(566);
     connect(m_clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
+
+    // Start microphone listening.
+    m_input = m_audioinput->start();
+    // Connect readyRead signal to readMre slot.
+    connect(m_input, SIGNAL(readyRead()), SLOT(readAudio()));
+}
+
+void Widget::stopGame()
+{
+    m_countdown = 4;
+    m_player->stop();
+    m_clapTimer->stop();
+    m_countdownTimer->stop();
+
+    // Stop audioinput.
+    m_audioinput->stop();
+
+    // Disconnect all signals.
+    disconnect(m_clapTimer, 0, 0, 0);
+    disconnect(m_countdownTimer, 0, 0, 0);
+    disconnect(m_input, 0, 0, 0);
 }

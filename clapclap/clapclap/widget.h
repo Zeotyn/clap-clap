@@ -24,16 +24,13 @@ class Widget : public QWidget
 
 public:
     explicit Widget(QWidget *parent = 0);
-    ~Widget();    
-    void startGame();
+    ~Widget();
 
 
 private slots:
     void on_startButton_clicked();
-
     void on_stopButton_clicked();
     void isClapped();
-
     void setDelay();
     void subCountdown();
     void readAudio();
@@ -68,6 +65,9 @@ private:
     // Audio setup.
     void initAudio();
     void createAudio();
+
+    void startGame();
+    void stopGame();
 
 };
 
