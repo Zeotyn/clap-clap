@@ -3,6 +3,7 @@
 #include <QMediaPlayer>
 #include <QDebug>
 
+
 #include <qendian.h>
 
 const int BufferSize = 14096;
@@ -14,6 +15,8 @@ Widget::Widget(QWidget *parent) :
     m_audioinput(0),
     m_input(0),
     m_buffer(BufferSize,0),
+    score(0),
+
     m_isClapped(false)
 {
     ui->setupUi(this);
@@ -28,6 +31,11 @@ Widget::~Widget()
     delete ui;
 }
 
+void changeCountdownLabel() {
+
+
+}
+
 void Widget::initAudio()
 {
 
@@ -35,7 +43,7 @@ void Widget::initAudio()
     // Channels set to mono.
     m_format.setChannelCount(1);
     // Set sample size.
-    m_format.setSampleSize(8);
+    m_format.setSampleSize(16);
     //    m_format.setSampleType(QAudioFormat::UnSignedInt ); //Sample type as usigned integer sample
     m_format.setSampleType(QAudioFormat::SignedInt);
     // Byte order.
@@ -190,24 +198,27 @@ void Widget::readMore()
         maxValue = qMin(maxValue, m_maxAmplitude);
         qreal level = qreal(maxValue) / m_maxAmplitude;
 
-        if(level > 0.7) {
+        if(level > 0.0001) {
             m_isClapped = true;
         }
         else {
             m_isClapped = false;
         }
 
-        qWarning() << "Pegel: " << level;
-        qWarning() << "Es wurde geklatscht: " << m_isClapped;
+
     }
 }
 
 void Widget::on_startButton_clicked()
 {
-    //    player->setMedia(QUrl::fromLocalFile("../clapclap/music.mp3"));
-    //    player->setVolume(50);
-    //    player->play();
+        //player->setMedia(QUrl::fromLocalFile("../clapclap/music.mp3"));
+        player->setVolume(50);
+        player->play();
 
+        ui->gameFrame->setStyleSheet("background-color: red;");
+        clapTimer->start(1000);
+        connect(clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
+ui->gameFrame->setStyleSheet("background-color: red;");
     // Start microphone listening.
     m_input = m_audioinput->start();
 
@@ -221,4 +232,19 @@ void Widget::on_stopButton_clicked()
 
     // Stop audioinput.
     m_audioinput->stop();
+}
+
+void Widget::delayChange() {
+    ui->gameFrame->setStyleSheet("background-color: red;");
+    clapTimer->start(1000);
+}
+
+void Widget::isClapped(){
+    ui->gameFrame->setStyleSheet("background-color: green;");
+    if(m_isClapped == true) {
+           score+=10;
+           QString scoreString = QString::number(score);
+           ui->scoreLabel->setText(scoreString);
+    }
+    QTimer::singleShot(25, this, SLOT(delayChange()));
 }
