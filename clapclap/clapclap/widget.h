@@ -9,8 +9,8 @@
 #include <QAudioInput>
 #include <QIODevice>
 #include <QByteArray>
-
 #include <QTimer>
+#include <QtDebug>
 
 
 namespace Ui {
@@ -34,21 +34,28 @@ private slots:
     void on_stopButton_clicked();
     void isClapped();
     void delayChange();
-    void readMore();
+    void readAudio();
 
 private:
     Ui::Widget *ui;
-    QMediaPlayer *player = new QMediaPlayer;
+    QMediaPlayer *m_player;
 
+    // Audiodevice for input.
     QAudioDeviceInfo m_inputdevice;
+    // Audioformat to be used.
     QAudioFormat m_format;
+    // Audioinput interface.
     QAudioInput *m_audioinput;
+    // Inputdevice used to read the bytes recoreded.
     QIODevice *m_input;
+    // Read buffer for bytes recorded.
     QByteArray m_buffer;
+    // Simple variable to check whether it had been slapped.
     bool m_isClapped;
-    int score;
-    QTimer * clapTimer = new QTimer(this);
+    int m_score;
+    QTimer * m_clapTimer;
 
+    // Audio setup.
     void initAudio();
     void createAudio();
 

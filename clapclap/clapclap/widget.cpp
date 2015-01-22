@@ -1,9 +1,5 @@
 #include "widget.h"
 #include "ui_widget.h"
-#include <QMediaPlayer>
-#include <QDebug>
-
-
 #include <qendian.h>
 
 const int BufferSize = 14096;
@@ -15,14 +11,16 @@ Widget::Widget(QWidget *parent) :
     m_audioinput(0),
     m_input(0),
     m_buffer(BufferSize,0),
-    score(0),
-
-    m_isClapped(false)
+    m_score(0),
+    m_isClapped(false),
+    m_player(new QMediaPlayer),
+    m_clapTimer(new QTimer(parent))
 {
     ui->setupUi(this);
     ui->backgroundFrame->setStyleSheet("background-color: black;");
     ui->gameFrame->setStyleSheet("background-color: grey;");
 
+    // Setup audio.
     initAudio();
 }
 
@@ -36,15 +34,18 @@ void changeCountdownLabel() {
 
 }
 
+/**
+ * Setup audio needs like audioformat and prepare audioinput.
+ * @brief Widget::initAudio
+ */
 void Widget::initAudio()
 {
-
     m_format.setSampleRate(8000);
     // Channels set to mono.
     m_format.setChannelCount(1);
     // Set sample size.
     m_format.setSampleSize(16);
-    //    m_format.setSampleType(QAudioFormat::UnSignedInt ); //Sample type as usigned integer sample
+    // Sample type.
     m_format.setSampleType(QAudioFormat::SignedInt);
     // Byte order.
     m_format.setByteOrder(QAudioFormat::LittleEndian);
@@ -53,7 +54,8 @@ void Widget::initAudio()
 
     // Check if configured audioformat is supported.
     QAudioDeviceInfo infoIn(QAudioDeviceInfo::defaultInputDevice());
-    if (!infoIn.isFormatSupported(m_format)) {
+    if (!infoIn.isFormatSupported(m_format))
+    {
         qWarning() << "Default format not supported - trying to use nearest.";
         m_format = infoIn.nearestFormat(m_format);
     }
@@ -73,7 +75,7 @@ void Widget::createAudio()
     m_audioinput = new QAudioInput(m_inputdevice, m_format, this);
 }
 
-void Widget::readMore()
+void Widget::readAudio()
 {
     // Exit if no audioinput is present.
     if(!m_audioinput)
@@ -127,15 +129,6 @@ void Widget::readMore()
     default:
         break;
     }
-
-
-
-
-
-
-
-
-
 
     if(len > 4096) {
         len = 4096;
@@ -198,6 +191,8 @@ void Widget::readMore()
         maxValue = qMin(maxValue, m_maxAmplitude);
         qreal level = qreal(maxValue) / m_maxAmplitude;
 
+        qDebug() << "Level: " << level;
+
         if(level > 0.0001) {
             m_isClapped = true;
         }
@@ -212,23 +207,23 @@ void Widget::readMore()
 void Widget::on_startButton_clicked()
 {
         //player->setMedia(QUrl::fromLocalFile("../clapclap/music.mp3"));
-        player->setVolume(50);
-        player->play();
+        m_player->setVolume(50);
+        m_player->play();
 
         ui->gameFrame->setStyleSheet("background-color: red;");
         clapTimer->start(566);
         connect(clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
-        //ui->gameFrame->setStyleSheet("background-color: red;");
+ui->gameFrame->setStyleSheet("background-color: red;");
     // Start microphone listening.
     m_input = m_audioinput->start();
 
     // Connect readyRead signal to readMre slot.
-    connect(m_input, SIGNAL(readyRead()), SLOT(readMore()));
+    connect(m_input, SIGNAL(readyRead()), SLOT(readAudio()));
 }
 
 void Widget::on_stopButton_clicked()
 {
-    //    player->stop();
+    //    m_player->stop();
 
     // Stop audioinput.
     m_audioinput->stop();
@@ -236,14 +231,14 @@ void Widget::on_stopButton_clicked()
 
 void Widget::delayChange() {
     ui->gameFrame->setStyleSheet("background-color: red;");
-    clapTimer->start(566);
+    m_clapTimer->start(566);
 }
 
 void Widget::isClapped(){
     ui->gameFrame->setStyleSheet("background-color: green;");
     if(m_isClapped == true) {
-           score+=10;
-           QString scoreString = QString::number(score);
+           m_score+=10;
+           QString scoreString = QString::number(m_score);
            ui->scoreLabel->setText(scoreString);
     }
     QTimer::singleShot(250, this, SLOT(delayChange()));
