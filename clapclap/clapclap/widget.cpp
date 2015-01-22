@@ -211,8 +211,8 @@ void Widget::on_startButton_clicked()
         m_player->play();
 
         ui->gameFrame->setStyleSheet("background-color: red;");
-        clapTimer->start(566);
-        connect(clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
+        m_clapTimer->start(566);
+        connect(m_clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
 ui->gameFrame->setStyleSheet("background-color: red;");
     // Start microphone listening.
     m_input = m_audioinput->start();
