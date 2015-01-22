@@ -13,7 +13,7 @@ Widget::Widget(QWidget *parent) :
     m_input(0),
     m_buffer(BufferSize,0),
     m_isClapped(false),
-    m_score(0),    
+    m_score(0),
     m_countdown(4),
     m_clapTimer(new QTimer(parent)),
     m_countdownTimer(new QTimer(parent)),
@@ -222,16 +222,21 @@ void Widget::on_startButton_clicked()
 void Widget::on_stopButton_clicked()
 {
     //    m_player->stop();
-ui->gameFrame->setStyleSheet("background-color: grey;");
-ui->countdownLabel->setText("5");
+    ui->gameFrame->setStyleSheet("background-color: grey;");
+    ui->countdownLabel->setText("5");
 
-m_countdown = 4;
-m_player->stop();
-m_clapTimer->stop();
-m_countdownTimer->stop();
+    m_countdown = 4;
+    m_player->stop();
+    m_clapTimer->stop();
+    m_countdownTimer->stop();
 
     // Stop audioinput.
     m_audioinput->stop();
+
+    // Disconnect all signals.
+    disconnect(m_clapTimer, 0, 0, 0);
+    disconnect(m_countdownTimer, 0, 0, 0);
+    disconnect(m_input, 0, 0, 0);
 }
 
 void Widget::setDelay() {
@@ -242,9 +247,9 @@ void Widget::setDelay() {
 void Widget::isClapped(){
     ui->gameFrame->setStyleSheet("background-color: green;");
     if(m_isClapped == true) {
-           m_score+=10;
-           QString scoreString = QString::number(m_score);
-           ui->scoreLabel->setText(scoreString);
+        m_score+=10;
+        QString scoreString = QString::number(m_score);
+        ui->scoreLabel->setText(scoreString);
     }
     QTimer::singleShot(250, this, SLOT(setDelay()));
 }
@@ -262,7 +267,9 @@ void Widget::subCountdown() {
 }
 
 void Widget::startGame() {
+
     m_player->setMedia(QUrl::fromLocalFile("../clapclap/music.mp3"));
+//    m_player->setMedia(QUrl::fromLocalFile("/Users/fhofmann/WORK/AVPRG/projekt/avprg/clapclap/clapclap/music.mp3"));
     m_player->setVolume(50);
     m_player->play();
 
