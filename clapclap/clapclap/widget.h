@@ -61,6 +61,9 @@ private:
     QTimer * m_countdownTimer = new QTimer(this);
 
 
+    // Required input-level for slapping.
+    qreal m_levelRequired;
+
     // Audio setup.
     void initAudio();
     void createAudio();

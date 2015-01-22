@@ -7,15 +7,15 @@ const int BufferSize = 14096;
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget),
+    m_player(new QMediaPlayer),
     m_inputdevice(QAudioDeviceInfo::defaultInputDevice()),
     m_audioinput(0),
     m_input(0),
     m_buffer(BufferSize,0),
-
-    m_score(0),
     m_isClapped(false),
-    m_player(new QMediaPlayer),
+    m_score(0),    
     m_clapTimer(new QTimer(parent)),
+    m_levelRequired(0.1),
     m_countdown(4)
 
 {
@@ -196,14 +196,12 @@ void Widget::readAudio()
 
         qDebug() << "Level: " << level;
 
-        if(level > 0.0001) {
+        if(level > m_levelRequired) {
             m_isClapped = true;
         }
         else {
             m_isClapped = false;
         }
-
-
     }
 }
 
