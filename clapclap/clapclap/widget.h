@@ -58,7 +58,7 @@ private:
     int m_score;
     int m_countdown;
     QTimer * m_clapTimer;
-    QTimer * m_countdownTimer = new QTimer(this);
+    QTimer * m_countdownTimer;
 
 
     // Required input-level for slapping.

@@ -14,10 +14,10 @@ Widget::Widget(QWidget *parent) :
     m_buffer(BufferSize,0),
     m_isClapped(false),
     m_score(0),    
+    m_countdown(4),
     m_clapTimer(new QTimer(parent)),
-    m_levelRequired(0.1),
-    m_countdown(4)
-
+    m_countdownTimer(new QTimer(parent)),
+    m_levelRequired(0.1)
 {
     ui->setupUi(this);
     ui->backgroundFrame->setStyleSheet("background-color: black;");
