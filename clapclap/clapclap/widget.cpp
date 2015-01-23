@@ -12,13 +12,14 @@ Widget::Widget(QWidget *parent) :
     m_input(0),
     m_buffer(BufferSize,0),
     m_isClapped(false),
-    m_score(0),
+    m_right(0),
     m_countdown(4),
     m_clapTimer(new QTimer(parent)),
     m_countdownTimer(new QTimer(parent)),
     m_levelRequired(0.05),
     m_progressTimer(new QTimer(parent)),
-    m_bpm(566)
+    m_bpm(566),
+    m_wrong(0)
 {
     // Setup ui elements.
     ui->setupUi(this);
@@ -225,11 +226,14 @@ void Widget::isClapped(){
 //    ui->gameFrame->setStyleSheet("background-color: green;");
     QTimer::singleShot(25, this, SLOT(setDelay()));
     if(m_isClapped == true) {
-        m_score+=10;
-        QString scoreString = QString::number(m_score);
-        ui->scoreLabel->setText(scoreString);
+        m_right+=1;
+        QString rightString = QString::number(m_right);
+        ui->rightLabel->setText(rightString);
         ui->backgroundFrame->setStyleSheet("background-color: green;");
     } else {
+        m_wrong+=1;
+        QString wrongString = QString::number(m_wrong);
+        ui->wrongLabel->setText(wrongString);
         ui->backgroundFrame->setStyleSheet("background-color: red;");
     }
     //ui->backgroundFrame->setStyleSheet("background-color: black;");

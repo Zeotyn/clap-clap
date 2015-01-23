@@ -51,7 +51,7 @@ private:
     // Simple variable to check whether it had been slapped.
     bool m_isClapped;
 
-    int m_score;
+    int m_right;
     int m_countdown;
     QTimer * m_clapTimer;
     QTimer * m_countdownTimer;
@@ -62,6 +62,7 @@ private:
     QTimer * m_progressTimer;
 
     int m_bpm;
+    int m_wrong;
 
     // Audio setup.
     void initAudio();

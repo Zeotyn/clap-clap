@@ -96,12 +96,12 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Highscore</string>
+      <string>Wrong Claps</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="scoreLabel">
+    <widget class="QLabel" name="rightLabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -109,7 +109,36 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>score</string>
+      <string>00</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="highscoreLabel2">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Right Claps</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="wrongLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>0</string>
      </property>
     </widget>
    </item>
