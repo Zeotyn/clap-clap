@@ -10,6 +10,7 @@
 #include <QTimer>
 #include <QtDebug>
 #include <QFile>
+#include <QMessageBox>
 
 
 namespace Ui {
@@ -71,6 +72,8 @@ private:
     void initGame();
     void startGame();
     void stopGame();
+
+    int m_counter;
 
 };
 

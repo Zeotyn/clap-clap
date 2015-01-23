@@ -19,7 +19,8 @@ Widget::Widget(QWidget *parent) :
     m_levelRequired(0.05),
     m_progressTimer(new QTimer(parent)),
     m_bpm(566),
-    m_wrong(0)
+    m_wrong(0),
+    m_counter(0)
 {
     // Setup ui elements.
     ui->setupUi(this);
@@ -204,7 +205,16 @@ void Widget::readAudio()
 
 void Widget::on_startButton_clicked()
 {
-    initGame();
+    if(ui->spinBox->value() >= 20) {
+        m_bpm = (60/ui->spinBox->value())*1000;
+
+        ui->progressBar->setMaximum(m_bpm);
+
+        initGame();
+    } else {
+        QMessageBox ::information(this, tr("Error"), tr("Please set the BPM to more than 20 BPM."));
+
+    }
 }
 
 void Widget::on_stopButton_clicked()
@@ -224,7 +234,7 @@ void Widget::setDelay() {
 
 void Widget::isClapped(){
 //    ui->gameFrame->setStyleSheet("background-color: green;");
-    QTimer::singleShot(25, this, SLOT(setDelay()));
+    //QTimer::singleShot(25, this, SLOT(setDelay()));
     if(m_isClapped == true) {
         m_right+=1;
         QString rightString = QString::number(m_right);
@@ -266,6 +276,8 @@ void Widget::startGame()
     m_clapTimer->start(m_bpm);
     connect(m_clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
 
+
+
     // Start microphone listening.
     m_input = m_audioinput->start();
     // Connect readyRead signal to readMre slot.
@@ -293,11 +305,14 @@ void Widget::stopGame()
 
 void Widget::progress()
 {
-    int val = ui->progressBar->value();
-    if(val >= m_bpm) {
-        val = 1;
+    if(m_counter == m_bpm) {
+        m_counter = 0;
         ui->backgroundFrame->setStyleSheet("background-color: black;");
     }
-    val+=1;
-    ui->progressBar->setValue(val);
+    else {
+        m_counter++;
+    }
+    ui->progressBar->setValue(m_counter);
+
+    qWarning() << m_bpm;
 }

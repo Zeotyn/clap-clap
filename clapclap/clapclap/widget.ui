@@ -96,7 +96,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Wrong Claps</string>
+      <string>Right Claps</string>
      </property>
     </widget>
    </item>
@@ -125,7 +125,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Right Claps</string>
+      <string>Wrong Claps</string>
      </property>
     </widget>
    </item>
@@ -138,9 +138,12 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>0</string>
+      <string>00</string>
      </property>
     </widget>
+   </item>
+   <item>
+    <widget class="QSpinBox" name="spinBox"/>
    </item>
    <item>
     <widget class="QPushButton" name="startButton">
