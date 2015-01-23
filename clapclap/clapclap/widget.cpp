@@ -232,12 +232,16 @@ void Widget::setDelay() {
 
 void Widget::isClapped(){
 //    ui->gameFrame->setStyleSheet("background-color: green;");
-    QTimer::singleShot(250, this, SLOT(setDelay()));
+    QTimer::singleShot(25, this, SLOT(setDelay()));
     if(m_isClapped == true) {
         m_score+=10;
         QString scoreString = QString::number(m_score);
         ui->scoreLabel->setText(scoreString);
+        ui->backgroundFrame->setStyleSheet("background-color: green;");
+    } else {
+        ui->backgroundFrame->setStyleSheet("background-color: red;");
     }
+    //ui->backgroundFrame->setStyleSheet("background-color: black;");
 }
 
 void Widget::subCountdown() {
@@ -303,6 +307,7 @@ void Widget::progress()
     int val = ui->progressBar->value();
     if(val >= m_bpm) {
         val = 1;
+        ui->backgroundFrame->setStyleSheet("background-color: black;");
     }
     val+=1;
     ui->progressBar->setValue(val);
