@@ -2,8 +2,6 @@
 #define WIDGET_H
 
 #include <QWidget>
-#include <QMediaPlayer>
-
 #include <QAudioDeviceInfo>
 #include <QAudioFormat>
 #include <QAudioInput>
@@ -39,7 +37,6 @@ private slots:
 
 private:
     Ui::Widget *ui;
-    QMediaPlayer *m_player;
 
     // Audiodevice for input.
     QAudioDeviceInfo m_inputdevice;

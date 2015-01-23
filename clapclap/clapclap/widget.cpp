@@ -7,7 +7,6 @@ const int BufferSize = 14096;
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget),
-    m_player(new QMediaPlayer),
     m_inputdevice(QAudioDeviceInfo::defaultInputDevice()),
     m_audioinput(0),
     m_input(0),
@@ -193,15 +192,12 @@ void Widget::readAudio()
         maxValue = qMin(maxValue, m_maxAmplitude);
         qreal level = qreal(maxValue) / m_maxAmplitude;
 
-        qDebug() << "Level: " << level;
-
         if(level > m_levelRequired) {
             m_isClapped = true;
         }
         else {
             m_isClapped = false;
         }
-        qWarning() << "isClapped: " << m_isClapped;
     }
 }
 
@@ -213,11 +209,6 @@ void Widget::on_startButton_clicked()
 void Widget::on_stopButton_clicked()
 {
     stopGame();
-    //    m_player->stop();
-//    ui->gameFrame->setStyleSheet("background-color: grey;");
-//    ui->countdownLabel->setText("5");
-
-
 }
 
 void Widget::setDelay() {
@@ -270,11 +261,6 @@ void Widget::startGame()
 
     m_clapTimer->start(m_bpm);
     connect(m_clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
-//    m_player->setMedia(QUrl("qrc:/mp3Files/music.mp3"));
-//    m_player->setVolume(50);
-//    m_player->play();
-
-
 
     // Start microphone listening.
     m_input = m_audioinput->start();
@@ -285,7 +271,6 @@ void Widget::startGame()
 void Widget::stopGame()
 {
     m_countdown = 4;
-    m_player->stop();
     m_clapTimer->stop();
     m_countdownTimer->stop();
 
