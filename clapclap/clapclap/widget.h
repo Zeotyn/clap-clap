@@ -34,6 +34,7 @@ private slots:
     void setDelay();
     void subCountdown();
     void readAudio();
+    void progress();
 
 
 private:
@@ -58,9 +59,10 @@ private:
     QTimer * m_clapTimer;
     QTimer * m_countdownTimer;
 
-
     // Required input-level for slapping.
     qreal m_levelRequired;
+
+    QTimer * m_progressTimer;
 
     // Audio setup.
     void initAudio();

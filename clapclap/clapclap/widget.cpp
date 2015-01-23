@@ -17,12 +17,13 @@ Widget::Widget(QWidget *parent) :
     m_countdown(4),
     m_clapTimer(new QTimer(parent)),
     m_countdownTimer(new QTimer(parent)),
-    m_levelRequired(0.1)
-{
-    ui->setupUi(this);
-    ui->backgroundFrame->setStyleSheet("background-color: black;");
-    ui->gameFrame->setStyleSheet("background-color: grey;");
+    m_levelRequired(0.1),
+    m_progressTimer(new QTimer(parent))
 
+{
+    // Setup ui elements.
+    ui->setupUi(this);
+    ui->progressBar->setValue(0);
     // Setup audio.
     initAudio();
 }
@@ -33,8 +34,6 @@ Widget::~Widget()
 }
 
 void changeCountdownLabel() {
-
-
 }
 
 /**
@@ -207,27 +206,31 @@ void Widget::readAudio()
 
 void Widget::on_startButton_clicked()
 {
-    m_countdownTimer->start(1000);
-    connect(m_countdownTimer, SIGNAL(timeout()), this, SLOT(subCountdown()));
+    startGame();
 }
 
 void Widget::on_stopButton_clicked()
 {
     stopGame();
     //    m_player->stop();
-    ui->gameFrame->setStyleSheet("background-color: grey;");
-    ui->countdownLabel->setText("5");
+//    ui->gameFrame->setStyleSheet("background-color: grey;");
+//    ui->countdownLabel->setText("5");
 
 
 }
 
 void Widget::setDelay() {
-    ui->gameFrame->setStyleSheet("background-color: red;");
+//    ui->gameFrame->setStyleSheet("background-color: red;");
+    int val = ui->progressBar->value();
+    val++;
+    ui->progressBar->setValue(val);
+
+
     m_clapTimer->start(566);
 }
 
 void Widget::isClapped(){
-    ui->gameFrame->setStyleSheet("background-color: green;");
+//    ui->gameFrame->setStyleSheet("background-color: green;");
     if(m_isClapped == true) {
         m_score+=10;
         QString scoreString = QString::number(m_score);
@@ -250,9 +253,15 @@ void Widget::subCountdown() {
 
 void Widget::startGame()
 {
-    m_player->setMedia(QUrl("qrc:/mp3Files/music.mp3"));
-    m_player->setVolume(50);
-    m_player->play();
+    m_progressTimer->start(10);
+    connect(m_progressTimer, SIGNAL(timeout()), this, SLOT(progress()));
+
+    m_countdownTimer->start(1000);
+    connect(m_countdownTimer, SIGNAL(timeout()), this, SLOT(subCountdown()));
+
+//    m_player->setMedia(QUrl("qrc:/mp3Files/music.mp3"));
+//    m_player->setVolume(50);
+//    m_player->play();
 
     m_clapTimer->start(566);
     connect(m_clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
@@ -277,4 +286,14 @@ void Widget::stopGame()
     disconnect(m_clapTimer, 0, 0, 0);
     disconnect(m_countdownTimer, 0, 0, 0);
     disconnect(m_input, 0, 0, 0);
+}
+
+void Widget::progress()
+{
+    int val = ui->progressBar->value();
+    if(val >= 560) {
+        val = 10;
+    }
+    val+=10;
+    ui->progressBar->setValue(val);
 }
