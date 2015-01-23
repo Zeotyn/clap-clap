@@ -17,9 +17,9 @@ Widget::Widget(QWidget *parent) :
     m_countdown(4),
     m_clapTimer(new QTimer(parent)),
     m_countdownTimer(new QTimer(parent)),
-    m_levelRequired(0.1),
-    m_progressTimer(new QTimer(parent))
-
+    m_levelRequired(0.05),
+    m_progressTimer(new QTimer(parent)),
+    m_bpm(566)
 {
     // Setup ui elements.
     ui->setupUi(this);
@@ -201,12 +201,13 @@ void Widget::readAudio()
         else {
             m_isClapped = false;
         }
+        qWarning() << "isClapped: " << m_isClapped;
     }
 }
 
 void Widget::on_startButton_clicked()
 {
-    startGame();
+    initGame();
 }
 
 void Widget::on_stopButton_clicked()
@@ -226,22 +227,23 @@ void Widget::setDelay() {
     ui->progressBar->setValue(val);
 
 
-    m_clapTimer->start(566);
+    m_clapTimer->start(m_bpm);
 }
 
 void Widget::isClapped(){
 //    ui->gameFrame->setStyleSheet("background-color: green;");
+    QTimer::singleShot(250, this, SLOT(setDelay()));
     if(m_isClapped == true) {
         m_score+=10;
         QString scoreString = QString::number(m_score);
         ui->scoreLabel->setText(scoreString);
     }
-    QTimer::singleShot(250, this, SLOT(setDelay()));
 }
 
 void Widget::subCountdown() {
     QString countdownString = QString::number(m_countdown);
     ui->countdownLabel->setText(countdownString);
+    ui->countdownLabel->setStyleSheet("color: white;");
     if(m_countdown == 0) {
         m_countdownTimer->stop();
         startGame();
@@ -251,20 +253,24 @@ void Widget::subCountdown() {
     }
 }
 
-void Widget::startGame()
+void Widget::initGame()
 {
-    m_progressTimer->start(10);
-    connect(m_progressTimer, SIGNAL(timeout()), this, SLOT(progress()));
-
     m_countdownTimer->start(1000);
     connect(m_countdownTimer, SIGNAL(timeout()), this, SLOT(subCountdown()));
+}
 
+void Widget::startGame()
+{
+    m_progressTimer->start(1);
+    connect(m_progressTimer, SIGNAL(timeout()), this, SLOT(progress()));
+
+    m_clapTimer->start(m_bpm);
+    connect(m_clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
 //    m_player->setMedia(QUrl("qrc:/mp3Files/music.mp3"));
 //    m_player->setVolume(50);
 //    m_player->play();
 
-    m_clapTimer->start(566);
-    connect(m_clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
+
 
     // Start microphone listening.
     m_input = m_audioinput->start();
@@ -282,18 +288,22 @@ void Widget::stopGame()
     // Stop audioinput.
     m_audioinput->stop();
 
+    ui->progressBar->setValue(0);
+    ui->countdownLabel->setText("5");
+
     // Disconnect all signals.
     disconnect(m_clapTimer, 0, 0, 0);
     disconnect(m_countdownTimer, 0, 0, 0);
     disconnect(m_input, 0, 0, 0);
+    disconnect(m_progressTimer, 0, 0, 0);
 }
 
 void Widget::progress()
 {
     int val = ui->progressBar->value();
-    if(val >= 560) {
-        val = 10;
+    if(val >= m_bpm) {
+        val = 1;
     }
-    val+=10;
+    val+=1;
     ui->progressBar->setValue(val);
 }

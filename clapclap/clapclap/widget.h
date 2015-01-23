@@ -64,10 +64,13 @@ private:
 
     QTimer * m_progressTimer;
 
+    int m_bpm;
+
     // Audio setup.
     void initAudio();
     void createAudio();
 
+    void initGame();
     void startGame();
     void stopGame();
 
