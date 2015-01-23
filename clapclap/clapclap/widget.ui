@@ -143,7 +143,20 @@
     </widget>
    </item>
    <item>
-    <widget class="QSpinBox" name="spinBox"/>
+    <widget class="QSpinBox" name="spinBox">
+     <property name="suffix">
+      <string> BPM</string>
+     </property>
+     <property name="prefix">
+      <string/>
+     </property>
+     <property name="minimum">
+      <number>20</number>
+     </property>
+     <property name="maximum">
+      <number>250</number>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QPushButton" name="startButton">
