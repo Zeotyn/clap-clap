@@ -4,6 +4,11 @@
 
 const int BufferSize = 14096;
 
+/**
+ * Constructor for widget class.
+ * @brief Widget::Widget
+ * @param parent
+ */
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget),
@@ -14,14 +19,17 @@ Widget::Widget(QWidget *parent) :
     m_isClapped(false),
     m_right(0),
     m_countdown(4),
-    m_clapTimer(new QTimer(parent)),
-    m_countdownTimer(new QTimer(parent)),
+
     m_levelRequired(0.05),
-    m_progressTimer(new QTimer(parent)),
-    m_bpm(566),
+
+    m_bpm(0),
     m_wrong(0),
-    m_counter(0)
+    m_counter(0),
+    m_test(0)
 {
+    m_progressTimer = new QTimer(this);
+    m_clapTimer = new QTimer(this);
+    m_countdownTimer = new QTimer(this);
     // Setup ui elements.
     ui->setupUi(this);
     ui->progressBar->setValue(0);
@@ -29,12 +37,13 @@ Widget::Widget(QWidget *parent) :
     initAudio();
 }
 
+/**
+ * Deconstrutor.
+ * @brief Widget::~Widget
+ */
 Widget::~Widget()
 {
     delete ui;
-}
-
-void changeCountdownLabel() {
 }
 
 /**
@@ -203,22 +212,29 @@ void Widget::readAudio()
     }
 }
 
+void Widget::isClapped(){
+    if(m_isClapped)
+    {
+        m_right++;
+        QString rightString = QString::number(m_right);
+        ui->rightLabel->setText(rightString);
+        ui->backgroundFrame->setStyleSheet("background-color: green;");
+    }
+    else
+    {
+        m_wrong+=1;
+        QString wrongString = QString::number(m_wrong);
+        ui->wrongLabel->setText(wrongString);
+        ui->backgroundFrame->setStyleSheet("background-color: red;");
+    }
+}
+
 void Widget::on_startButton_clicked()
 {
     // Set active states for ui buttons.
     ui->startButton->setDisabled(true);
     ui->stopButton->setDisabled(false);
-
-    if(ui->spinBox->value() >= 20) {
-        m_bpm = (60/ui->spinBox->value())*1000;
-
-        ui->progressBar->setMaximum(m_bpm);
-
-        initGame();
-    } else {
-        QMessageBox ::information(this, tr("Error"), tr("Please set the BPM to more than 20 BPM."));
-
-    }
+    initGame();
 }
 
 void Widget::on_stopButton_clicked()
@@ -229,61 +245,43 @@ void Widget::on_stopButton_clicked()
     stopGame();
 }
 
-void Widget::setDelay() {
-//    ui->gameFrame->setStyleSheet("background-color: red;");
-    int val = ui->progressBar->value();
-    val++;
-    ui->progressBar->setValue(val);
-
-
-    m_clapTimer->start(m_bpm);
+void Widget::initGame()
+{
+    m_test = 60 / ui->spinBox->value();
+    m_bpm = (60/ui->spinBox->value()) * 1000;
+    m_countdownTimer->setTimerType(Qt::PreciseTimer);
+    m_countdownTimer->start(1000);
+    connect(m_countdownTimer, SIGNAL(timeout()), this, SLOT(countdown()));
 }
 
-void Widget::isClapped(){
-//    ui->gameFrame->setStyleSheet("background-color: green;");
-    //QTimer::singleShot(25, this, SLOT(setDelay()));
-    if(m_isClapped == true) {
-        m_right+=1;
-        QString rightString = QString::number(m_right);
-        ui->rightLabel->setText(rightString);
-        ui->backgroundFrame->setStyleSheet("background-color: green;");
-    } else {
-        m_wrong+=1;
-        QString wrongString = QString::number(m_wrong);
-        ui->wrongLabel->setText(wrongString);
-        ui->backgroundFrame->setStyleSheet("background-color: red;");
-    }
-    //ui->backgroundFrame->setStyleSheet("background-color: black;");
-}
-
-void Widget::subCountdown() {
+void Widget::countdown() {
     QString countdownString = QString::number(m_countdown);
     ui->countdownLabel->setText(countdownString);
     ui->countdownLabel->setStyleSheet("color: white;");
-    if(m_countdown == 0) {
-        m_countdownTimer->stop();
-        startGame();
+
+    if(m_countdown == 0)
+    {
         ui->countdownLabel->setText(" ");
-    } else {
+        // Stop countdown and disconnect.
+        m_countdownTimer->stop();
+        disconnect(m_countdownTimer, 0, 0, 0);
+        startGame();
+    }
+    else
+    {
         m_countdown--;
     }
 }
 
-void Widget::initGame()
-{
-    m_countdownTimer->start(1000);
-    connect(m_countdownTimer, SIGNAL(timeout()), this, SLOT(subCountdown()));
-}
-
 void Widget::startGame()
 {
+    m_progressTimer->setTimerType(Qt::PreciseTimer);
+    qWarning() << m_progressTimer->timerType();
     m_progressTimer->start(1);
     connect(m_progressTimer, SIGNAL(timeout()), this, SLOT(progress()));
 
-    m_clapTimer->start(m_bpm);
-    connect(m_clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
-
-
+//    m_clapTimer->start(m_bpm);
+//    connect(m_clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
 
     // Start microphone listening.
     m_input = m_audioinput->start();
@@ -305,21 +303,36 @@ void Widget::stopGame()
 
     // Disconnect all signals.
     disconnect(m_clapTimer, 0, 0, 0);
-    disconnect(m_countdownTimer, 0, 0, 0);
     disconnect(m_input, 0, 0, 0);
     disconnect(m_progressTimer, 0, 0, 0);
 }
 
 void Widget::progress()
 {
+
+    QString progressString = QString::number(m_test, 'g', 0);
+    ui->countdownLabel->setText(progressString);
+
+    qreal foo = (m_test * 1000)-1;
+
+    m_test = foo/1000;
+
     if(m_counter == m_bpm) {
+        m_test = 60/ ui->spinBox->value();
         m_counter = 0;
-        ui->backgroundFrame->setStyleSheet("background-color: black;");
     }
     else {
         m_counter++;
     }
-    ui->progressBar->setValue(m_counter);
 
-    qWarning() << m_bpm;
+
+//    if(m_counter == m_bpm) {
+//        m_counter = 0;
+//        ui->backgroundFrame->setStyleSheet("background-color: black;");
+//    }
+//    else {
+//        m_counter++;
+//    }
+//    ui->progressBar->setValue(m_counter);
 }
+

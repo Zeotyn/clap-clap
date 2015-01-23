@@ -30,8 +30,7 @@ private slots:
     void on_startButton_clicked();
     void on_stopButton_clicked();
     void isClapped();
-    void setDelay();
-    void subCountdown();
+    void countdown();
     void readAudio();
     void progress();
 
@@ -62,7 +61,7 @@ private:
 
     QTimer * m_progressTimer;
 
-    int m_bpm;
+    qreal m_bpm;
     int m_wrong;
 
     // Audio setup.
@@ -74,6 +73,7 @@ private:
     void stopGame();
 
     int m_counter;
+    qreal m_test;
 
 };
 
