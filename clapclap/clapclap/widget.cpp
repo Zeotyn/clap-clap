@@ -205,6 +205,10 @@ void Widget::readAudio()
 
 void Widget::on_startButton_clicked()
 {
+    // Set active states for ui buttons.
+    ui->startButton->setDisabled(true);
+    ui->stopButton->setDisabled(false);
+
     if(ui->spinBox->value() >= 20) {
         m_bpm = (60/ui->spinBox->value())*1000;
 
@@ -219,6 +223,9 @@ void Widget::on_startButton_clicked()
 
 void Widget::on_stopButton_clicked()
 {
+    // Set active states for ui buttons.
+    ui->startButton->setDisabled(false);
+    ui->stopButton->setDisabled(true);
     stopGame();
 }
 
