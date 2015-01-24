@@ -71,10 +71,10 @@
          <string notr="true"/>
         </property>
         <property name="maximum">
-         <number>566</number>
+         <number>100</number>
         </property>
         <property name="value">
-         <number>24</number>
+         <number>0</number>
         </property>
         <property name="textVisible">
          <bool>false</bool>

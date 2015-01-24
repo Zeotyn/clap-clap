@@ -13,16 +13,26 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-    qWarning() << "hello";
-
     QThread* somethread = new QThread(this);
-    QTimer *timer = new QTimer(0);
-    timer->moveToThread(somethread);
+    QTimer* timer = new QTimer(0); //parent must be null
     timer->setInterval(1);
-    timer->setTimerType(Qt::PreciseTimer);
-//    timer->start(1);
-    connect(timer, SIGNAL(timeout()), this, SLOT(gogo()));
-//    somethread->start();
+    timer->moveToThread(somethread);
+    //connect what you want
+    connect(timer, SIGNAL(timeout()), SLOT(gogo()), Qt::DirectConnection);
+    QObject::connect(somethread, SIGNAL(started()), timer, SLOT(start()));
+    somethread->start();
+
+
+
+//    QThread* m_thread = new QThread(this);
+//    QTimer* timer = new QTimer(0); // _not_ this!
+//    timer->setInterval(1);
+//    timer->moveToThread(m_thread);
+//    // Use a direct connection to make sure that doIt() is called from m_thread.
+//    connect(timer, SIGNAL(timeout()), SLOT(gogo()), Qt::DirectConnection);
+//    // Make sure the timer gets started from m_thread.
+//    QObject::connect(m_thread, SIGNAL(started()), timer, SLOT(start()));
+//    m_thread->start();
 
 
 }
@@ -34,10 +44,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::gogo()
 {
-
-    a = foo / 1000;
-//    qWarning() << a;
-    QString b = QString::number(a);
-    ui->label->setText(b);
-    foo++;
+    qWarning() << "gogogo";
+//    a = foo / 1000;
+////    qWarning() << a;
+//    QString b = QString::number(a);
+//    ui->label->setText(b);
+//    foo++;
 }

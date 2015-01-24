@@ -25,9 +25,13 @@ Widget::Widget(QWidget *parent) :
     m_bpm(0),
     m_wrong(0),
     m_counter(0),
-    m_test(0)
+    m_progressThread(new QThread(parent))
 {
-    m_progressTimer = new QTimer(this);
+    m_progressTimer = new QTimer(0);
+    m_progressTimer->setInterval(1);
+    m_progressTimer->setTimerType(Qt::PreciseTimer);
+    m_progressTimer->moveToThread(m_progressThread);
+
     m_clapTimer = new QTimer(this);
     m_countdownTimer = new QTimer(this);
     // Setup ui elements.
@@ -247,11 +251,13 @@ void Widget::on_stopButton_clicked()
 
 void Widget::initGame()
 {
-    m_test = 60 / ui->spinBox->value();
     m_bpm = (60/ui->spinBox->value()) * 1000;
+    ui->progressBar->setMaximum(m_bpm);
     m_countdownTimer->setTimerType(Qt::PreciseTimer);
     m_countdownTimer->start(1000);
     connect(m_countdownTimer, SIGNAL(timeout()), this, SLOT(countdown()));
+
+    connect(this,SIGNAL(counterChanged(int)), ui->progressBar, SLOT(setValue(int)));
 }
 
 void Widget::countdown() {
@@ -275,13 +281,12 @@ void Widget::countdown() {
 
 void Widget::startGame()
 {
-    m_progressTimer->setTimerType(Qt::PreciseTimer);
-    qWarning() << m_progressTimer->timerType();
-    m_progressTimer->start(1);
-    connect(m_progressTimer, SIGNAL(timeout()), this, SLOT(progress()));
+    connect(m_progressTimer, SIGNAL(timeout()), SLOT(progress()), Qt::DirectConnection);
+    QObject::connect(m_progressThread, SIGNAL(started()), m_progressTimer, SLOT(start()));
+    m_progressThread->start();
 
-//    m_clapTimer->start(m_bpm);
-//    connect(m_clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
+//        m_clapTimer->start(m_bpm);
+//        connect(m_clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
 
     // Start microphone listening.
     m_input = m_audioinput->start();
@@ -292,6 +297,7 @@ void Widget::startGame()
 void Widget::stopGame()
 {
     m_countdown = 4;
+    m_counter = 0;
     m_clapTimer->stop();
     m_countdownTimer->stop();
 
@@ -305,34 +311,21 @@ void Widget::stopGame()
     disconnect(m_clapTimer, 0, 0, 0);
     disconnect(m_input, 0, 0, 0);
     disconnect(m_progressTimer, 0, 0, 0);
+    QObject::disconnect(m_progressThread, 0,0,0);
+    m_progressThread->exit();
 }
 
 void Widget::progress()
 {
-
-    QString progressString = QString::number(m_test, 'g', 0);
-    ui->countdownLabel->setText(progressString);
-
-    qreal foo = (m_test * 1000)-1;
-
-    m_test = foo/1000;
-
-    if(m_counter == m_bpm) {
-        m_test = 60/ ui->spinBox->value();
+    if(m_counter == m_bpm)
+    {
         m_counter = 0;
     }
     else {
         m_counter++;
     }
-
-
-//    if(m_counter == m_bpm) {
-//        m_counter = 0;
-//        ui->backgroundFrame->setStyleSheet("background-color: black;");
-//    }
-//    else {
-//        m_counter++;
-//    }
-//    ui->progressBar->setValue(m_counter);
+    // Broadcast signal that counter has changed.
+    emit counterChanged(m_counter);
 }
+
 

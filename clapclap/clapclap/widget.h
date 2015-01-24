@@ -11,6 +11,7 @@
 #include <QtDebug>
 #include <QFile>
 #include <QMessageBox>
+#include <QThread>
 
 
 namespace Ui {
@@ -24,6 +25,10 @@ class Widget : public QWidget
 public:
     explicit Widget(QWidget *parent = 0);
     ~Widget();
+
+signals:
+    void counterChanged(int);
+
 
 
 private slots:
@@ -73,7 +78,8 @@ private:
     void stopGame();
 
     int m_counter;
-    qreal m_test;
+
+    QThread* m_progressThread;
 
 };
 
