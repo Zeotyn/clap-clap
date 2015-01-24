@@ -64,6 +64,9 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
         <property name="autoFillBackground">
          <bool>false</bool>
         </property>
@@ -77,6 +80,12 @@
          <number>0</number>
         </property>
         <property name="textVisible">
+         <bool>false</bool>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="invertedAppearance">
          <bool>false</bool>
         </property>
         <property name="textDirection">
@@ -109,7 +118,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>00</string>
+      <string>0</string>
      </property>
     </widget>
    </item>
@@ -138,7 +147,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>00</string>
+      <string>0</string>
      </property>
     </widget>
    </item>

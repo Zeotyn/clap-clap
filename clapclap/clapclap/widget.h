@@ -73,6 +73,7 @@ private:
 
     QThread* m_progressThread;
     QString m_background;
+    quint32 m_maxAmplitude;
 
     // Audio setup.
     void initAudio();
