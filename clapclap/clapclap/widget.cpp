@@ -19,20 +19,18 @@ Widget::Widget(QWidget *parent) :
     m_isClapped(false),
     m_right(0),
     m_countdown(4),
-
     m_levelRequired(0.05),
-
     m_bpm(0),
     m_wrong(0),
     m_counter(0),
-    m_progressThread(new QThread(parent))
+    m_progressThread(new QThread(parent)),
+    m_background("background: black;")
 {
     m_progressTimer = new QTimer(0);
     m_progressTimer->setInterval(1);
     m_progressTimer->setTimerType(Qt::PreciseTimer);
     m_progressTimer->moveToThread(m_progressThread);
 
-    m_clapTimer = new QTimer(this);
     m_countdownTimer = new QTimer(this);
     // Setup ui elements.
     ui->setupUi(this);
@@ -216,23 +214,6 @@ void Widget::readAudio()
     }
 }
 
-void Widget::isClapped(){
-    if(m_isClapped)
-    {
-        m_right++;
-        QString rightString = QString::number(m_right);
-        ui->rightLabel->setText(rightString);
-        ui->backgroundFrame->setStyleSheet("background-color: green;");
-    }
-    else
-    {
-        m_wrong+=1;
-        QString wrongString = QString::number(m_wrong);
-        ui->wrongLabel->setText(wrongString);
-        ui->backgroundFrame->setStyleSheet("background-color: red;");
-    }
-}
-
 void Widget::on_startButton_clicked()
 {
     // Set active states for ui buttons.
@@ -258,6 +239,10 @@ void Widget::initGame()
     connect(m_countdownTimer, SIGNAL(timeout()), this, SLOT(countdown()));
 
     connect(this,SIGNAL(counterChanged(int)), ui->progressBar, SLOT(setValue(int)));
+    connect(this,SIGNAL(wrongClapsCountChanged(QString)), ui->wrongLabel, SLOT(setText(QString)));
+    connect(this,SIGNAL(rightClapsCountChanged(QString)), ui->rightLabel, SLOT(setText(QString)));
+
+    connect(this,SIGNAL(backgroundChanged(QString)), ui->backgroundFrame, SLOT(setStyleSheet(QString)));
 }
 
 void Widget::countdown() {
@@ -283,10 +268,8 @@ void Widget::startGame()
 {
     connect(m_progressTimer, SIGNAL(timeout()), SLOT(progress()), Qt::DirectConnection);
     QObject::connect(m_progressThread, SIGNAL(started()), m_progressTimer, SLOT(start()));
-    m_progressThread->start();
 
-//        m_clapTimer->start(m_bpm);
-//        connect(m_clapTimer, SIGNAL(timeout()), this, SLOT(isClapped()));
+    m_progressThread->start();
 
     // Start microphone listening.
     m_input = m_audioinput->start();
@@ -296,9 +279,14 @@ void Widget::startGame()
 
 void Widget::stopGame()
 {
+    // Disconnect all signals and exit thread.
+    disconnect(m_input, 0, 0, 0);
+    disconnect(m_progressTimer, 0, 0, 0);
+    QObject::disconnect(m_progressThread, 0,0,0);
+    m_progressThread->exit();
+
     m_countdown = 4;
     m_counter = 0;
-    m_clapTimer->stop();
     m_countdownTimer->stop();
 
     // Stop audioinput.
@@ -306,26 +294,42 @@ void Widget::stopGame()
 
     ui->progressBar->setValue(0);
     ui->countdownLabel->setText("5");
-
-    // Disconnect all signals.
-    disconnect(m_clapTimer, 0, 0, 0);
-    disconnect(m_input, 0, 0, 0);
-    disconnect(m_progressTimer, 0, 0, 0);
-    QObject::disconnect(m_progressThread, 0,0,0);
-    m_progressThread->exit();
 }
 
 void Widget::progress()
 {
     if(m_counter == m_bpm)
     {
+        if(m_isClapped)
+        {
+            m_right++;
+            m_background = "background: green;";
+            emit backgroundChanged(m_background);
+        }
+        else
+        {
+            m_wrong++;
+            m_background = "background: red;";
+            emit backgroundChanged(m_background);
+        }
         m_counter = 0;
     }
     else {
         m_counter++;
+
+        if(m_counter == 100) {
+            m_background = "background: black;";
+            emit backgroundChanged(m_background);
+        }
     }
+
+    QString rightString = QString::number(m_right);
+    QString wrongString = QString::number(m_wrong);
+
     // Broadcast signal that counter has changed.
     emit counterChanged(m_counter);
+    emit wrongClapsCountChanged(wrongString);
+    emit rightClapsCountChanged(rightString);
 }
 
 

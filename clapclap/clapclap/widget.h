@@ -28,13 +28,13 @@ public:
 
 signals:
     void counterChanged(int);
-
-
+    void wrongClapsCountChanged(QString);
+    void rightClapsCountChanged(QString);
+    void backgroundChanged(QString);
 
 private slots:
     void on_startButton_clicked();
     void on_stopButton_clicked();
-    void isClapped();
     void countdown();
     void readAudio();
     void progress();
@@ -58,7 +58,7 @@ private:
 
     int m_right;
     int m_countdown;
-    QTimer * m_clapTimer;
+
     QTimer * m_countdownTimer;
 
     // Required input-level for slapping.
@@ -69,6 +69,11 @@ private:
     qreal m_bpm;
     int m_wrong;
 
+    int m_counter;
+
+    QThread* m_progressThread;
+    QString m_background;
+
     // Audio setup.
     void initAudio();
     void createAudio();
@@ -77,9 +82,7 @@ private:
     void startGame();
     void stopGame();
 
-    int m_counter;
 
-    QThread* m_progressThread;
 
 };
 
