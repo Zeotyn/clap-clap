@@ -359,6 +359,8 @@ void Widget::stopGame()
     m_countdown = 4;
     m_counter = 0;
     m_countdownTimer->stop();
+    m_wrong = 0;
+    m_right = 0;
 
     // Stop audioinput.
     m_audioinput->stop();
